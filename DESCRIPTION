@@ -1,0 +1,9 @@
+Package: scio
+Title:  Sparse Column-wise Inverse Operator
+Version: 0.6.1
+Author: Xi (Rossi) LUO and Weidong Liu
+Maintainer: Xi (Rossi) LUO <xi.rossi.luo@gmail.com>
+Suggests: clime, lorec, QUIC
+Description:  Sparse Column-wise Inverse Operator for estimating the inverse covariance matrix.  Note that this is a preliminary version accompanying the arXiv paper (arXiv:1203.3896) in 2012.   This version contains only the minimal set of functions for estimation and cross validation.
+License: GPL-2
+Packaged: April 15, 2014
