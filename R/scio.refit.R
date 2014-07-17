@@ -10,7 +10,11 @@ scio.refit <- function(S, Omega, thr = 1e-04, ...) {
         w <- 0*Omega 
         for (jj in 1:ss[3]) {
             rho <- HUGE*(abs(Omega[,,jj])<thr) + thr
-            w[,,jj] <-  QUIC(S, rho, ...)$X
+            if (jj > 1) {
+                w[,,jj] <-  QUIC(S, rho, X.init=w[,,jj-1], ...)$X
+            } else {
+                w[,,jj] <-  QUIC(S, rho, ...)$X
+            }
         }
     } else {
         rho <- HUGE*(abs(Omega)<thr) + thr
