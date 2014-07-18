@@ -1,24 +1,53 @@
-scio.refit <- function(S, Omega, thr = 1e-04, ...) {
-    if(!require(QUIC))  {
+scio.refit <- function(S, Omega, thr = 1e-04, pkg=c("QUIC", "glasso"), ...) {
+    ## By default, Omega from the smallest lambda to the largest 
+    pkg <- match.arg(pkg, c("QUIC", "glasso"))
+    
+    if(pkg == "glasso" && !require(glasso))  {
+        warning("Refitting did not run because package glasso is not available!")
+        return(list(w=NULL))
+    }
+    if(pkg == "QUIC" && !require(QUIC))  {
         warning("Refitting did not run because package QUIC is not available!")
         return(list(w=NULL))
     }
+    
     HUGE <- 1e8
     ss <- dim(Omega)
 
     if (length(ss)>2) {
-        w <- 0*Omega 
-        for (jj in 1:ss[3]) {
+        w <- 0*Omega; o <- 0*Omega
+        for (jj in ss[3]:1) {
             rho <- HUGE*(abs(Omega[,,jj])<thr) + thr
-            if (jj > 1) {
-                w[,,jj] <-  QUIC(S, rho, X.init=w[,,jj-1], ...)$X
+            ## Warm start 
+            if (pkg=="glasso") {
+                if (jj < ss[3] ) {
+                    tmp <-  glasso(S, rho, start="warm", w.init=o[,,jj+1], wi.init=w[,,jj+1], ...)
+                    w[,,jj] <- tmp$wi
+                    o[,,jj] <- tmp$w
+                } else {
+                    tmp <-  glasso(S, rho, ...)
+                    w[,,jj] <- tmp$wi
+                    o[,,jj] <- tmp$w
+                }
             } else {
-                w[,,jj] <-  QUIC(S, rho, ...)$X
+                if (jj < ss[3]) {
+                    tmp <-  QUIC(S, rho, W.init=o[,,jj+1], X.init=w[,,jj+1], ...)
+                    w[,,jj] <- tmp$X
+                    o[,,jj] <- tmp$W
+                } else {
+                    tmp <-  QUIC(S, rho, ...)
+                    w[,,jj] <- tmp$X
+                    o[,,jj] <- tmp$W
+                }
             }
         }
     } else {
         rho <- HUGE*(abs(Omega)<thr) + thr
-        w <- QUIC(S, rho, ...)$X
+        if (pkg=="glasso") {
+            w <- glasso(S, rho, ...)$wi
+        } else {
+            w <- QUIC(S, rho, ...)$X
+        } 
     }
     return(list(w=w))
 }
