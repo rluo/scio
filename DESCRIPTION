@@ -1,6 +1,6 @@
 Package: scio
 Title:  Sparse Column-wise Inverse Operator
-Version: 0.7
+Version: 0.7.1
 Author: Xi (Rossi) LUO and Weidong Liu
 Maintainer: Xi (Rossi) LUO <xi.rossi.luo@gmail.com>
 Suggests: clime, lorec, glasso,  QUIC

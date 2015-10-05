@@ -18,6 +18,7 @@ scio.refit <- function(S, Omega, thr = 1e-04, pkg=c("QUIC", "glasso"), ...) {
         w <- 0*Omega; o <- 0*Omega
         for (jj in ss[3]:1) {
             rho <- HUGE*(abs(Omega[,,jj])<thr) + thr
+            diag(rho) <-  thr           # not penalize the diagonal
             ## Warm start 
             if (pkg=="glasso") {
                 if (jj < ss[3] ) {
@@ -43,6 +44,7 @@ scio.refit <- function(S, Omega, thr = 1e-04, pkg=c("QUIC", "glasso"), ...) {
         }
     } else {
         rho <- HUGE*(abs(Omega)<thr) + thr
+        diag(rho) <-  thr           # not penalize the diagonal
         if (pkg=="glasso") {
             w <- glasso(S, rho, ...)$wi
         } else {

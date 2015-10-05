@@ -1,3 +1,7 @@
+2015-10-04  Xi Luo  <xluo@Einstein.local>
+
+	* Version 0.7.1: unpenalize diagonal in scio.refit
+
 2014-07-17  Xi (Rossi) LUO  <xi.rossi.luo@gmail.com>
 
 	* Version 0.7: improved scio.reft via warm starts
