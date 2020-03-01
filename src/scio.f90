@@ -5,6 +5,7 @@
 !     version 0.1.5 on June 13, 2011
 !     version 0.2  on August 26, 2011
 !     version 0.3  on March 23, 2012
+!     version 0.4 
       subroutine solveColA(n,ic,S,b,rhocol,thr,maxit, niter)
 !     Add active set strategy
       implicit double precision(a-h,o-z)
@@ -13,15 +14,18 @@
       double precision, dimension (:), allocatable :: ss
       logical, dimension(:), allocatable :: ja
       logical ia
+      ia = .false.
       allocate(ss(1:n), stat=ierr)
       allocate(ja(1:n), stat=ierr)
-!     Loop trhough
+!     Loop through
+      ss(1:n) = 0.0
       ss = matmul(S,-b)
-      ia = .false.
+!      ia = .false.
       ja(1:n) = .true.
       
       thr50=50.0*thr
       
+
       do 101 niter=1,maxit
 !     Through Loop
          dlx=0.0
@@ -106,6 +110,8 @@
       jerr = 0
       allocate(rhomat(1:n, 1:n), stat=ierr)
       jerr = jerr + ierr
+      if (ierr.gt.0) goto 301
+      rhomat = 0.0
       rhomat = rho
       if (idiag .eq. 0) then
          do ijj = 1, n
@@ -133,7 +139,7 @@
          nniter = max(nniter, niter)
  105  continue
 !     call dblepr("wlist",5,wlist(:,:,10),n*n)
-      if (allocated(rhomat)) deallocate(rhomat)
+ 301  if (allocated(rhomat)) deallocate(rhomat)
       return
       end
       

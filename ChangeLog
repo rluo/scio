@@ -1,4 +1,9 @@
-2015-10-04  Xi Luo  <xluo@Einstein.local>
+
+2020-02-03  Xi (Rossi) LUO  <xi.rossi.luo@gmail.com>
+
+	* Version 0.7.2: fix cran R warnings
+
+2015-10-04  Xi (Rossi) LUO  <xi.rossi.luo@gmail.com>
 
 	* Version 0.7.1: unpenalize diagonal in scio.refit
 

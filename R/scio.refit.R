@@ -2,11 +2,11 @@ scio.refit <- function(S, Omega, thr = 1e-04, pkg=c("QUIC", "glasso"), ...) {
     ## By default, Omega from the smallest lambda to the largest 
     pkg <- match.arg(pkg, c("QUIC", "glasso"))
     
-    if(pkg == "glasso" && !require(glasso))  {
+    if(pkg == "glasso" && !requireNamespace("glasso",  quietly = TRUE))  {
         warning("Refitting did not run because package glasso is not available!")
         return(list(w=NULL))
     }
-    if(pkg == "QUIC" && !require(QUIC))  {
+    if(pkg == "QUIC" && !requireNamespace("QUIC",  quietly = TRUE))  {
         warning("Refitting did not run because package QUIC is not available!")
         return(list(w=NULL))
     }
@@ -22,21 +22,21 @@ scio.refit <- function(S, Omega, thr = 1e-04, pkg=c("QUIC", "glasso"), ...) {
             ## Warm start 
             if (pkg=="glasso") {
                 if (jj < ss[3] ) {
-                    tmp <-  glasso(S, rho, start="warm", w.init=o[,,jj+1], wi.init=w[,,jj+1], ...)
+                    tmp <-  glasso::glasso(S, rho, start="warm", w.init=o[,,jj+1], wi.init=w[,,jj+1], ...)
                     w[,,jj] <- tmp$wi
                     o[,,jj] <- tmp$w
                 } else {
-                    tmp <-  glasso(S, rho, ...)
+                    tmp <-  glasso::glasso(S, rho, ...)
                     w[,,jj] <- tmp$wi
                     o[,,jj] <- tmp$w
                 }
             } else {
                 if (jj < ss[3]) {
-                    tmp <-  QUIC(S, rho, W.init=o[,,jj+1], X.init=w[,,jj+1], ...)
+                    tmp <-  QUIC::QUIC(S, rho, W.init=o[,,jj+1], X.init=w[,,jj+1], ...)
                     w[,,jj] <- tmp$X
                     o[,,jj] <- tmp$W
                 } else {
-                    tmp <-  QUIC(S, rho, ...)
+                    tmp <-  QUIC::QUIC(S, rho, ...)
                     w[,,jj] <- tmp$X
                     o[,,jj] <- tmp$W
                 }
@@ -46,9 +46,9 @@ scio.refit <- function(S, Omega, thr = 1e-04, pkg=c("QUIC", "glasso"), ...) {
         rho <- HUGE*(abs(Omega)<thr) + thr
         diag(rho) <-  thr           # not penalize the diagonal
         if (pkg=="glasso") {
-            w <- glasso(S, rho, ...)$wi
+            w <- glasso::glasso(S, rho, ...)$wi
         } else {
-            w <- QUIC(S, rho, ...)$X
+            w <- QUIC::QUIC(S, rho, ...)$X
         } 
     }
     return(list(w=w))
