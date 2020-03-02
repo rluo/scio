@@ -12,14 +12,17 @@
       parameter(eps=1e-6)
       double precision S(n,n), b(n), rhocol(n)
       double precision, dimension (:), allocatable :: ss
+      double precision, dimension (:), allocatable :: negb
       logical, dimension(:), allocatable :: ja
       logical ia
       ia = .false.
       allocate(ss(1:n), stat=ierr)
       allocate(ja(1:n), stat=ierr)
+      allocate(negb(1:n), stat=ierr)
 !     Loop through
       ss(1:n) = 0.0
-      ss = matmul(S,-b)
+      negb(1:n) = -1.0*b(1:n)
+      ss = matmul(S,negb)
 !      ia = .false.
       ja(1:n) = .true.
       
@@ -40,7 +43,7 @@
             vth = abs(v) - rhocol(j)
             if (vth .gt. 0.0) b(j) = sign(vth, v)/S(j,j) 
 !     if (niter .lt. 5) call intpr("j",1,j,1)
-            if (bj.eq.b(j)) goto 102
+            if ( abs(bj-b(j)).lt.eps ) goto 102
             del = b(j)-bj
             dlx = max(dlx, abs(del))
             ss = ss - del*S(:,j)
@@ -51,7 +54,7 @@
             if (dlx .lt. thr) goto 103
             if (dlx .lt. thr50) then
                ia = .true.
-               ja(1:n) = b(1:n).eq.0.0
+               ja(1:n) = abs(b(1:n)).lt.eps
             endif
          endif
  101  continue
